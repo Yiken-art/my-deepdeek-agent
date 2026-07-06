@@ -3,6 +3,24 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 支持命令历史，上下键翻历史输入
+try:
+    import readline
+    # 历史文件保存在用户目录
+    histfile = os.path.join(os.path.expanduser("~"), ".my_agent_history")
+    try:
+        readline.read_history_file(histfile)
+        readline.set_history_length(1000)
+    except FileNotFoundError:
+        pass
+    # 退出时自动保存历史
+    import atexit
+    atexit.register(readline.write_history_file, histfile)
+except ImportError:
+    # Windows没有readline就跳过，不影响使用
+    pass
+    
+
 
 from agent.llm_client import LLMClient
 from agent.react_agent import ReActAgent
